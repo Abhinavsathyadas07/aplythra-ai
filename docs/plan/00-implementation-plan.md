@@ -152,6 +152,41 @@ Tasks (one at a time, each committed separately):
 
 The MVP (spec §11) maps to Phases 1–6 plus the tracker and scheduler pieces of 8/9, deployed in 9. Order: 1 → 2 → 3 → 4 → 5 → 6 → (tracker subset of 8) → 9 → 10 → 7 and the rest of 8 after the MVP is stable. Each phase ends with a test report and a stop for your approval.
 
+## 8a. Architecture diagram
+
+```
+ MacBook / Android (PWA)                       Supabase
+ ┌────────────────────┐   login (JWT)    ┌──────────────────────┐
+ │ Next.js on Vercel  │ ───────────────► │ Auth                 │
+ │ (no secrets, no DB │                  │ Postgres (RLS)       │
+ │  access)           │                  │ Private Storage      │
+ └─────────┬──────────┘                  └───────▲──────────▲───┘
+           │ HTTPS + bearer JWT                  │          │
+           ▼                                     │          │
+ ┌────────────────────┐   enqueue tasks   ┌──────┴──────────┴───┐
+ │ FastAPI API        │ ────────────────► │ Worker + scheduler  │
+ │ (verify JWT, authz,│  (scheduled_tasks │ discovery, matching,│
+ │  audit, budgets)   │   table, SKIP     │ CV build (DOCX→PDF),│
+ └────────────────────┘   LOCKED)         │ follow-up checks    │
+                                          └───┬────────────┬────┘
+                                              ▼            ▼
+                                     Anthropic API   Permitted job sources
+                                     (budget-capped) (APIs/feeds only)
+ Post-MVP: Playwright application assistant (approval-gated), Gmail OAuth (read + draft only)
+```
+
+## 8b. Security considerations
+
+- **Secrets:** env vars only; `.env*` gitignored; secret scanning in pre-commit and CI; service-role key and Anthropic key exist only in API/worker.
+- **AuthN/AuthZ:** Supabase Auth JWT verified in FastAPI; ownership check on every user-owned resource plus RLS deny-by-default; two-user cross-access tests in CI.
+- **Data protection:** TLS everywhere; private bucket with short-lived signed URLs; CV text and personal data redacted from logs and error monitoring; mock data only in development.
+- **Consequential actions:** submission, email sending, and declarations require an explicit approval row (`application_approvals`) tied to a document version; all such actions write to append-only `audit_logs`.
+- **Abuse and cost control:** per-user rate limits, daily token/cost budgets, idempotency keys, bounded retries with backoff, kill switch for scheduled tasks.
+- **Untrusted input:** job descriptions and recruiter emails are treated as data (prompt-injection safe: structured outputs, no tool execution driven by them).
+- **Compliance:** GDPR export and delete endpoints, retention job for old documents/logs, documented lawful basis and subprocessors (Anthropic, Supabase, hosting).
+- **Platform rules:** no CAPTCHA/anti-bot bypass, no scraping of sources that forbid it; per-source ToS recorded in `job_sources`.
+- **Sessions:** short-lived access tokens, refresh rotation, httpOnly cookies via `@supabase/ssr`, session-expiry tests in Phase 10.
+
 ## 9. Decisions I need from you
 
 1. **Hosting for API/worker:** Fly.io, Railway, or Render? (default: Railway, simplest)
