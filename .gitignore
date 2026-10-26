@@ -218,3 +218,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- JobPilot AI ---
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+storage/
+*.local
+# Real candidate documents must never be committed (mock data lives in tests/fixtures/mock/)
+*.docx
+*.pdf
+!tests/fixtures/mock/**
+!apps/api/tests/fixtures/mock/**
+!docs/**/*.pdf
