@@ -1,2 +1,18 @@
-# aplythra-ai
+# aplythra-ai (JobPilot AI)
+
 Private, cloud-powered AI career agent for job discovery, ATS resume tailoring, application assistance, and intelligent tracking.
+
+- Plan: [`docs/plan/00-implementation-plan.md`](docs/plan/00-implementation-plan.md)
+- Conventions and hard rules: [`CLAUDE.md`](CLAUDE.md)
+- Skills (operator/dev guidance): [`.claude/skills/`](.claude/skills/)
+
+## Getting started
+```bash
+scripts/doctor.sh                      # check your toolchain (macOS or Linux)
+cd apps/api && uv sync && uv run pytest
+python3 scripts/lint_skills.py
+```
+Copy `apps/api/.env.example` to `apps/api/.env` and fill in values locally. Never commit `.env` files or real CVs.
+
+## Status
+Phase 1 (environment and repository) — in review. See the plan for the roadmap.
