@@ -9,10 +9,11 @@ Private, cloud-powered AI career agent for job discovery, ATS resume tailoring, 
 ## Getting started
 ```bash
 scripts/doctor.sh                      # check your toolchain (macOS or Linux)
+scripts/dev-db.sh                      # local Postgres 16 + roles (Linux; see script for macOS)
 cd apps/api && uv sync && uv run pytest
 python3 scripts/lint_skills.py
 ```
 Copy `apps/api/.env.example` to `apps/api/.env` and fill in values locally. Never commit `.env` files or real CVs.
 
 ## Status
-Phase 1 (environment and repository) — in review. See the plan for the roadmap.
+Phase 1 (repository) done; Phase 2 (backend foundation) in review. See the plan for the roadmap.

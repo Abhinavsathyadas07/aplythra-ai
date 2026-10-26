@@ -7,4 +7,12 @@ Phase 1 controls in place:
 - `.claude/settings.json` denies Claude Code from reading `.env*` files.
 - Env templates contain placeholders only (tested for secret-like patterns).
 
-Not yet in place (planned): pre-commit secret scanner, RLS, auth, rate limits, budgets, retention job.
+Phase 2 controls in place (tested in `apps/api/tests`):
+- JWT verification: bad signature, expired, wrong audience/issuer, non-UUID subject, HS256/alg-confusion all return 401; error bodies never echo the token.
+- RLS on `users` and `audit_logs` (ENABLE + FORCE) using the runtime role; two-user isolation, no-identity-sees-nothing, forged-insert and cross-user-update tests.
+- `audit_logs` is append-only for the runtime role (UPDATE/DELETE denied).
+- Identity is set per transaction (`set_config(..., true)`) and verified not to leak across transactions.
+- Logs: JSON, request id, path only (no query strings, tokens or emails); unhandled errors return a generic 500.
+- Production config guard: refuses missing JWKS URL, wildcard CORS and the dev DB password.
+
+Known gaps (planned): pre-commit secret scanner, rate limiting, LLM budgets, retention job, security headers at the edge, error monitoring with PII scrubbing.
