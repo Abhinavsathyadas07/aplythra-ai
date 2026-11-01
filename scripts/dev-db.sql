@@ -12,3 +12,5 @@ SELECT 'CREATE DATABASE jobpilot OWNER jobpilot_owner'
   WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'jobpilot')\gexec
 SELECT 'CREATE DATABASE jobpilot_test OWNER jobpilot_owner'
   WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'jobpilot_test')\gexec
+SELECT 'CREATE DATABASE jobpilot_e2e OWNER jobpilot_owner'
+  WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'jobpilot_e2e')\gexec

@@ -16,4 +16,4 @@ if [ "$(id -u)" = 0 ] && id postgres >/dev/null 2>&1; then
 else
   psql -v ON_ERROR_STOP=1 -q -d postgres -f dev-db.sql
 fi
-echo "Postgres ready: databases jobpilot, jobpilot_test; roles jobpilot_owner, jobpilot_app"
+echo "Postgres ready: databases jobpilot, jobpilot_test, jobpilot_e2e; roles jobpilot_owner, jobpilot_app"
