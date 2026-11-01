@@ -233,3 +233,9 @@ storage/
 !tests/fixtures/mock/**
 !apps/api/tests/fixtures/mock/**
 !docs/**/*.pdf
+test-results/
+playwright-report/
+# Python's template ignores lib/, but the web app's source lives in apps/web/lib
+!apps/web/lib/
+!apps/web/lib/**
+*.tsbuildinfo
